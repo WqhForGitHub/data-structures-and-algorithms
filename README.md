@@ -1,5 +1,85 @@
 
 
+
+
+# 字符编码
+
+
+
+## 1. ASCII 字符集
+
+**`ASCII 码是最早出现的字符集，其全称为 American Standard Code for Information Interchange（美国标准信息交换代码）。它使用 7 位二进制数（一个字节的低 7 位）表示一个字符，最多能够表示 128 个不同的字符。如下图所示，ASCII 码包括英文字母的大小写、数字 0 ~ 9、一些标点符号，以及一些控制字符（如换行符和制表符）。`**
+
+![](https://www.hello-algo.com/chapter_data_structure/character_encoding.assets/ascii_table.png)
+
+**`然而，ASCII 码仅能够表示英文。随着计算机的全球化，诞生了一种能够表示更多语言的 EASCII 字符集。它在 ASCII 的 7 位基础上扩展到 8 位，能够表示 256 个不同的字符。在世界范围内，陆续出现了一批适用于不同地区的 EASCII 字符集。这些字符集的前 128 个字符统一为 ASCII 码，后 128 个字符定义不同，以适应不同语言的需求。`**
+
+
+
+
+
+## 2. GBK 字符集
+
+**`后来人们发现，EASCII 码仍然无法满足许多语言的字符数量要求。比如汉字有近十万个，光日常使用的就有几千个。中国国家标准总局于 1980 年发布了  GB2312 字符集，其收录了 6763 个汉字，基本满足了汉字的计算机处理需要。然而，GB2312 无法处理部分罕见字和繁体字。GBK 字符集是在 GB2312 的基础上扩展得到的，它共收录了 21886 个汉字。在 GBK 的编码方案中，ASCII 字符使用一个字节表示，汉字使用两个字节表示。`** 
+
+
+
+
+
+## 3. Unicode 字符集
+
+**`随着计算机技术的蓬勃发展，字符集与编码标准百花齐放，而这带来了许多问题。一方面，这些字符集一般只定义了特定语言的字符，无法在多语言环境下正常工作。另一方面，同一种语言存在多种字符集标准，如果两台计算机使用的是不同的编码标准，则在信息传递时就会出现乱码。`** 
+
+**`那个时代的研究人员就在想：如果推出一个足够完整的字符集，将世界范围内的所有语言和符号都收录其中，不就可以解决跨语言环境和乱码问题了吗？在这种想法的驱动下，一个大而全的字符集 Unicode 应运而生。`** 
+
+**`Unicode 的中文名称为统一码，理论上能容纳 100 多万个字符。它致力于将全球范围内的字符纳入统一的字符集之中，提供一种通用的字符集来处理和显示各种语言文字，减少因为编码标准不同而产生的乱码问题。`** 
+
+**`自 1991 年发布以来，Unicode 不断扩充新的语言与字符。截至 2022 年 9 月，Unicode 已经包含 149186 个字符，包含各种语言的字符、符号甚至表情符号等。在庞大的 Unicode 字符集中，常用的字符占用 2 个字节，有些生僻的字符占用 3 字节甚至 4 字节。`** 
+
+**`Unicode 是一种通用字符集，本质上是给每个字符分配一个编号（称为码点），但它并没有规定在计算机中如何存储这些字符码点。我们不禁会问：当多种长度的 Unicode 码点同时出现在一个文本中时，系统如何解析字符？例如给定一个长度为 2 字节的编码，系统如何确认它是一个 2 字节的字符还是两个 1 字节的字符？`** 
+
+**`对于以上问题，一种直接的解决方案是将所有字符存储为等长的编码。如图所示，"Hello" 中的每个字符占用 1 字节，算法中的每个字符占用 2 字节。我们可以通过高位填 0 将 Hello 算法中的所有字符都编码为 2 字节长度。这样系统就可以每隔 2 字节解析一个字符，恢复这个短语的内容了。`** 
+
+![](https://www.hello-algo.com/chapter_data_structure/character_encoding.assets/unicode_hello_algo.png)
+
+**`然而 ASCII 码已经向我们证明，编码英文只需 1 字节。若采用上述方案，英文文本占用空间的大小将会是 ASCII 编码下的两倍，非常浪费内存空间。因此，我们需要一种更加高效的 Unicode 编码方法。`** 
+
+
+
+
+
+## 4. UTF-8 编码
+
+**`目前，UTF-8 已成为国际上使用最广泛的 Unicode 编码方法。它是一种可变长度的编码，使用 1 到 4 字节来表示一个字符，根据字节的复杂性而变。ASCII 字符只需 1 字节，拉丁字母和希腊字母需要 2 字节，常用的中文字符需要 3 字节，其他的一些生僻字符需要 4 字节。`** 
+
+**`UTF-8 的编码规则并不复杂，分为以下两种情况。`** 
+
+* **`对于长度为 1 字节的字符，将最高位设置为 0，其余 7 位设置为 Unicode 码点。值得注意的是，ASCII 字符在 Unicode 字符集中占据了前 128 个码点。也就是说，UTF-8 编码可以向下兼容 ASCII 码。这意味着我们可以使用 UTF-8 来解析年代久远的 ASCII 码文本。`** 
+* **`对于长度为 n 字节的字符（其中 n > 1），将首个字节的高 n 位都设置为 1，第 n + 1 位设置为 0；从第二个字节开始，将每个字符的高 2 位的设置为 10；其余所有位用于填充字符的 Unicode 码点。`** 
+
+![](https://www.hello-algo.com/chapter_data_structure/character_encoding.assets/utf-8_hello_algo.png)
+
+**`除了 UTF-8 之外，常见的编码方式还包括以下两种。`** 
+
+* **`UTF-16 编码：使用 2 或 4 字节来表示一个字符。所有的 ASCII 字符和常用的非英文字符，都用 2 字节表示；少数字符需要用到 4 字节表示。对于 2 字节的字符，UTF-16 编码与 Unicode 码点相等。`** 
+* **`UTF-32 编码：每个字符都使用 4 字节。这意味着 UTF-32 比 UTF-8 和 UTF-16 更占用空间，特别是对于 ASCII 字符占比较高的文本。`** 
+
+**`从存储空间占用的角度看，使用 UTF-8 表示英文字符非常高效，因为它仅需 1 字节；使用 UTF-16 编码某些非英文字符（例如中文）会更加高效，因为它仅需 2 字节，而 UTF-8 可能需要 3 字节。`** 
+
+**`从兼容性的角度看，UTF-8 的通用性最佳，许多工具和库优先支持 UTF-8。`** 
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 数组
 
 ## 1. `push()`
@@ -860,6 +940,138 @@ console.log("双端队列大小:", deque.size()); // 输出: 2
 
 # 链表
 
+**`如以下代码所示，链表节点 ListNode 除了包含值，还需额外保存一个引用（指针）。因此在相同数据量下，链表比数组占用更多的内存空间。`** 
+
+```javascript
+class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+```
+
+
+
+
+
+## 1. 链表常用操作
+
+
+
+### 1. 初始化链表
+
+![](https://www.hello-algo.com/chapter_array_and_linkedlist/linked_list.assets/linkedlist_definition.png)
+
+```javascript
+const n0 = new ListNode(1);
+const n1 = new ListNode(3);
+const n2 = new ListNode(2);
+const n3 = new ListNode(5);
+const n4 = new ListNode(4);
+
+n0.next = n1;
+n1.next = n2;
+n2.next = n3;
+n3.next = n4;
+```
+
+**`数组整体是一个变量，比如数组 nums 包含元素 nums[0] 和 nums[1] 等，而链表是由多个独立的节点对象组成的。我们通常将头节点当作链表的代称，比如以上代码中的链表可记作链表 n0。`**
+
+
+
+
+
+### 2. 插入节点
+
+![](https://www.hello-algo.com/chapter_array_and_linkedlist/linked_list.assets/linkedlist_insert_node.png)
+
+```javascript
+// 在链表的节点 n0 之后插入节点 P
+
+function insert(n0, P) {
+    const n1 = n0.next;
+    P.next = n1;
+    n0.next = P;
+}
+```
+
+
+
+
+
+### 3. 删除节点
+
+![](https://www.hello-algo.com/chapter_array_and_linkedlist/linked_list.assets/linkedlist_remove_node.png)
+
+```javascript
+// 删除链表的节点 n0 之后的首个节点
+
+function remove(n0) {
+    if (!n0.next) return;
+    const P = n0.next;
+    const n1 = P.next;
+    n0.next = n1;
+}
+```
+
+
+
+
+
+### 4. 访问节点
+
+**`在链表中访问节点的效率较低。`**
+
+```javascript
+// 访问链表中索引为 index 的节点
+
+function access(head, index) {
+    for (let i = 0; i < index; i++) {
+        if (!head) {
+            return null;
+        }
+        
+        head = head.next;
+    }
+    
+    return head;
+}
+```
+
+
+
+
+
+### 5. 查找节点
+
+```javascript
+// 在链表中查找值为 target 的首个节点
+
+function find(head, target) {
+    let index = 0;
+    
+    while (head !== null) {
+        if (head.val === target) {
+            return index;
+        }
+        
+        head = head.next;
+        index += 1;
+    }
+    
+    return -1;
+}
+```
+
+
+
+
+
+
+
+
+
 ```javascript
 class Node {
   constructor(data) {
@@ -915,7 +1127,7 @@ linkedList.printList(); // 输出: 10 20 30
 
 
 
-## 1. 双向链表
+## 2. 双向链表
 
 ```javascript
 class DoublyNode {
@@ -988,7 +1200,7 @@ doublyLinkedList.printListReverse(); // 输出: 30 20 10
 
 
 
-## 2. 循环链表
+## 3. 循环链表
 
 ```javascript
 class CircularNode {
@@ -2675,4 +2887,236 @@ function merge(left, right) {
     return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
 }
 ```
+
+
+
+
+
+
+
+## 5. 快速排序
+
+```javascript
+function partition(nums, left, right) {
+    let i = left, j= right;
+    while(i < j) {
+        while(i < j && nums[j] >= nums[left]) {
+            j -= 1;
+        }
+        
+        while(i < j && nums[i] <= nums[left]) {
+            i += 1;
+        }
+        
+        [nums[i], nums[j]] = [nums[j], nums[i]];
+    }
+    
+    [nums[i], nums[left]] = [nums[left], nums[i]];
+    
+    return i;
+}
+
+
+function quickSort(nums, left, right) {
+    while (left < right) {
+        // 1. 划分数组
+        const pivotIndex = partition(nums, left, right);
+        // 2. 递归排序左子数组
+        quickSort(nums, left, pivotIndex - 1);
+        // 3. 递归排序右子数组
+        quickSort(nums, pivotIndex + 1, right);
+    }
+}
+```
+
+
+
+
+
+## 6. 堆排序
+
+```javascript
+/* 堆的长度为 n ，从节点 i 开始，从顶至底堆化 */
+function siftDown(nums, n, i) {
+    while (true) {
+        // 判断节点 i, l, r 中值最大的节点，记为 ma
+        let l = 2 * i + 1;
+        let r = 2 * i + 2;
+        let ma = i;
+        if (l < n && nums[l] > nums[ma]) {
+            ma = l;
+        }
+        if (r < n && nums[r] > nums[ma]) {
+            ma = r;
+        }
+        // 若节点 i 最大或索引 l, r 越界，则无须继续堆化，跳出
+        if (ma === i) {
+            break;
+        }
+        // 交换两节点
+        [nums[i], nums[ma]] = [nums[ma], nums[i]];
+        // 循环向下堆化
+        i = ma;
+    }
+}
+
+/* 堆排序 */
+function heapSort(nums) {
+    // 建堆操作：堆化除叶节点以外的其他所有节点
+    for (let i = Math.floor(nums.length / 2) - 1; i >= 0; i--) {
+        siftDown(nums, nums.length, i);
+    }
+    // 从堆中提取最大元素，循环 n-1 轮
+    for (let i = nums.length - 1; i > 0; i--) {
+        // 交换根节点与最右叶节点（交换首元素与尾元素）
+        [nums[0], nums[i]] = [nums[i], nums[0]];
+        // 以根节点为起点，从顶至底进行堆化
+        siftDown(nums, i, 0);
+    }
+}
+```
+
+
+
+
+
+## 7. 桶排序
+
+```javascript
+/* 桶排序 */
+function bucketSort(nums) {
+    // 初始化 k = n/2 个桶，预期向每个桶分配 2 个元素
+    const k = nums.length / 2;
+    const buckets = [];
+    for (let i = 0; i < k; i++) {
+        buckets.push([]);
+    }
+    // 1. 将数组元素分配到各个桶中
+    for (const num of nums) {
+        // 输入数据范围为 [0, 1)，使用 num * k 映射到索引范围 [0, k-1]
+        const i = Math.floor(num * k);
+        // 将 num 添加进桶 i
+        buckets[i].push(num);
+    }
+    // 2. 对各个桶执行排序
+    for (const bucket of buckets) {
+        // 使用内置排序函数，也可以替换成其他排序算法
+        bucket.sort((a, b) => a - b);
+    }
+    // 3. 遍历桶合并结果
+    let i = 0;
+    for (const bucket of buckets) {
+        for (const num of bucket) {
+            nums[i++] = num;
+        }
+    }
+}
+```
+
+
+
+
+
+
+
+## 8. 计数排序
+
+```javascript
+/* 计数排序 */
+// 完整实现，可排序对象，并且是稳定排序
+function countingSort(nums) {
+    // 1. 统计数组最大元素 m
+    let m = 0;
+    for (const num of nums) {
+        m = Math.max(m, num);
+    }
+    // 2. 统计各数字的出现次数
+    // counter[num] 代表 num 的出现次数
+    const counter = new Array(m + 1).fill(0);
+    for (const num of nums) {
+        counter[num]++;
+    }
+    // 3. 求 counter 的前缀和，将“出现次数”转换为“尾索引”
+    // 即 counter[num]-1 是 num 在 res 中最后一次出现的索引
+    for (let i = 0; i < m; i++) {
+        counter[i + 1] += counter[i];
+    }
+    // 4. 倒序遍历 nums ，将各元素填入结果数组 res
+    // 初始化数组 res 用于记录结果
+    const n = nums.length;
+    const res = new Array(n);
+    for (let i = n - 1; i >= 0; i--) {
+        const num = nums[i];
+        res[counter[num] - 1] = num; // 将 num 放置到对应索引处
+        counter[num]--; // 令前缀和自减 1 ，得到下次放置 num 的索引
+    }
+    // 使用结果数组 res 覆盖原数组 nums
+    for (let i = 0; i < n; i++) {
+        nums[i] = res[i];
+    }
+}
+```
+
+
+
+
+
+## 9. 基数排序
+
+```javascript
+/* 获取元素 num 的第 k 位，其中 exp = 10^(k-1) */
+function digit(num, exp) {
+    // 传入 exp 而非 k 可以避免在此重复执行昂贵的次方计算
+    return Math.floor(num / exp) % 10;
+}
+
+/* 计数排序（根据 nums 第 k 位排序） */
+function countingSortDigit(nums, exp) {
+    // 十进制的位范围为 0~9 ，因此需要长度为 10 的桶数组
+    const counter = new Array(10).fill(0);
+    const n = nums.length;
+    // 统计 0~9 各数字的出现次数
+    for (let i = 0; i < n; i++) {
+        const d = digit(nums[i], exp); // 获取 nums[i] 第 k 位，记为 d
+        counter[d]++; // 统计数字 d 的出现次数
+    }
+    // 求前缀和，将“出现个数”转换为“数组索引”
+    for (let i = 1; i < 10; i++) {
+        counter[i] += counter[i - 1];
+    }
+    // 倒序遍历，根据桶内统计结果，将各元素填入 res
+    const res = new Array(n).fill(0);
+    for (let i = n - 1; i >= 0; i--) {
+        const d = digit(nums[i], exp);
+        const j = counter[d] - 1; // 获取 d 在数组中的索引 j
+        res[j] = nums[i]; // 将当前元素填入索引 j
+        counter[d]--; // 将 d 的数量减 1
+    }
+    // 使用结果覆盖原数组 nums
+    for (let i = 0; i < n; i++) {
+        nums[i] = res[i];
+    }
+}
+
+/* 基数排序 */
+function radixSort(nums) {
+    // 获取数组的最大元素，用于判断最大位数
+    let m = Number.MIN_VALUE;
+    for (const num of nums) {
+        if (num > m) {
+            m = num;
+        }
+    }
+    // 按照从低位到高位的顺序遍历
+    for (let exp = 1; exp <= m; exp *= 10) {
+        // 对数组元素的第 k 位执行计数排序
+        // k = 1 -> exp = 1
+        // k = 2 -> exp = 10
+        // 即 exp = 10^(k-1)
+        countingSortDigit(nums, exp);
+    }
+}
+```
+
+
 
