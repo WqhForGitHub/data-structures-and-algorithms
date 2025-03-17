@@ -1819,339 +1819,209 @@ function fibonacci(n) {
 
 
 
-## 1. 树数据结构
-
-**`首先，我们定义一个简单的树节点类：`**
+## 1. 二叉树
 
 ```javascript
 class TreeNode {
-    constructor(val) {
-        this.val = val;
-        this.left = null;
-        this.right = null;
+    val;
+    left;
+    right;
+    constructor(val, left, right) {
+        this.val = val === undefined ? 0 : val;
+        this.left = left === undefined ? null : left;
+        this.right = right === undefined ? null : right;
     }
 }
 ```
 
 
 
+![](https://www.hello-algo.com/chapter_tree/binary_tree.assets/binary_tree_definition.png)
+
+### 1. 二叉树常见术语
+
+* **`根节点（root node）：位于二叉树顶层的节点，没有父节点。`** 
+* **`叶节点（leaf node）：没有子节点的节点，其两个指针均指向 none。`** 
+* **`边（edge）：连接两个节点的线段，即节点引用（指针）。`** 
+* **`节点所在的层（level）：从顶至底递增，根节点所在层为 1。`** 
+* **`节点的度（degree）：节点的子节点的数量。在二叉树中，度的取值范围是 0、1、2。`** 
+* **`二叉树的高度（height）：从根节点到最远叶节点所经过的边的数量。`** 
+* **`节点的深度（depth）：从根节点到该节点所经过的边的数量。`** 
+* **`节点的高度（height）：从距离该节点最远的叶节点到该节点所经过的边的数量。`** 
+
+![](https://www.hello-algo.com/chapter_tree/binary_tree.assets/binary_tree_terminology.png)
+
+### 2. 二叉树基本操作
 
 
-## 2. 二叉搜索树（BST）
+
+#### 1. 初始化二叉树
+
+**`与链表类似，首先初始化节点，然后构建引用（指针）。`**
 
 ```javascript
-class BinarySearchTree {
-  constructor() {
-    this.root = null;
-  }
+let n1 = new TreeNode(1),
+    n2 = new TreeNode(2),
+    n3 = new TreeNode(3),
+    n4 = new TreeNode(4),
+    n5 = new TreeNode(5);
 
-  // 插入节点
-  insert(val) {
-    const newNode = new TreeNode(val);
-
-    if (!this.root) {
-      this.root = newNode;
-      return;
-    }
-
-    this.insertNode(this.root, newNode);
-  }
-
-  insertNode(node, newNode) {
-    if (newNode.val < node.val) {
-      if (!node.left) {
-        node.left = newNode;
-      } else {
-        this.insertNode(node.left, newNode);
-      }
-    } else {
-      if (!node.right) {
-        node.right = newNode;
-      } else {
-        this.insertNode(node.right, newNode);
-      }
-    }
-  }
-
-  // 搜索最小值
-  min() {
-    if (!this.root) {
-      return null;
-    }
-    return this.minNode(this.root).val;
-  }
-
-  minNode(node) {
-    let current = node;
-    while (current && current.left) {
-      current = current.left;
-    }
-    return current;
-  }
-
-  // 搜索最大值
-  max() {
-    if (!this.root) {
-      return null;
-    }
-    return this.maxNode(this.root).val;
-  }
-
-  maxNode(node) {
-    let current = node;
-    while (current && current.right) {
-      current = current.right;
-    }
-    return current;
-  }
-
-  // 搜索特定值
-  search(val) {
-    return this.searchNode(this.root, val);
-  }
-
-  searchNode(node, val) {
-    if (!node) {
-      return false;
-    }
-
-    if (val < node.val) {
-      return this.searchNode(node.left, val);
-    } else if (val > node.val) {
-      return this.searchNode(node.right, val);
-    } else {
-      return true;
-    }
-  }
-
-  // 移除节点
-  remove(val) {
-    this.root = this.removeNode(this.root, val);
-  }
-
-  removeNode(node, val) {
-    if (!node) {
-      return null;
-    }
-
-    if (val < node.val) {
-      node.left = this.removeNode(node.left, val);
-      return node;
-    } else if (val > node.val) {
-      node.right = this.removeNode(node.right, val);
-      return node;
-    } else {
-      // 找到要删除的节点
-
-      // 情况 1: 叶子节点
-      if (!node.left && !node.right) {
-        node = null;
-        return node;
-      }
-
-      // 情况 2: 只有一个子节点
-      if (!node.left) {
-        node = node.right;
-        return node;
-      } else if (!node.right) {
-        node = node.left;
-        return node;
-      }
-
-      // 情况 3: 有两个子节点
-      const aux = this.minNode(node.right); // 找到右子树的最小值
-      node.val = aux.val; // 将右子树的最小值替换当前节点的值
-      node.right = this.removeNode(node.right, aux.val); // 从右子树中移除最小值
-      return node;
-    }
-  }
-
-  // 中序遍历
-  inorderTraversal(callback) {
-    this.inorderTraversalNode(this.root, callback);
-  }
-
-  inorderTraversalNode(node, callback) {
-    if (node) {
-      this.inorderTraversalNode(node.left, callback);
-      callback(node.val);
-      this.inorderTraversalNode(node.right, callback);
-    }
-  }
-}
+n1.left = n2;
+n1.right = n3;
+n2.left = n4;
+n2.right = n5;
 ```
 
 
 
+#### 2. 插入与删除节点
 
+**`与链表类似，在二叉树中插入与删除节点可以通过修改指针来实现。如下图给出了一个示例。`** 
 
-
-
-
-
-## 3. 树的遍历
-
-
-
-### 1. 先序遍历
-
-* **`递归实现`**
+![](https://www.hello-algo.com/chapter_tree/binary_tree.assets/binary_tree_add_remove.png)
 
 ```javascript
-function preorderTraversalRecursive(root) {
-  const result = [];
+let P = new TreeNode(0);
 
-  function traverse(node) {
-    if (node) {
-      result.push(node.val); // 访问根节点
-      traverse(node.left);   // 遍历左子树
-      traverse(node.right);  // 遍历右子树
-    }
-  }
+// 在 n1 -> n2 中间插入节点 P
 
-  traverse(root);
-  return result;
-}
+n1.left = P;
+P.left = n2;
+
+// 删除节点 P
+
+n1.left = n2;
 ```
 
 
 
-* **`迭代实现`**
+
+
+### 3. 常见二叉树类型
+
+
+
+#### 1. 完美二叉树
+
+**`完美二叉树所有层的节点都被完全填满。在完美二叉树中，叶节点的度为 0，其余所有节点的度都为 2。`**
+
+![](https://www.hello-algo.com/chapter_tree/binary_tree.assets/perfect_binary_tree.png)
+
+
+
+#### 2. 完全二叉树
+
+**`完全二叉树只有最底层的节点未被填满，且最底层节点尽量靠左填充。请注意，完美二叉树也是一颗完全二叉树。`** 
+
+![](https://www.hello-algo.com/chapter_tree/binary_tree.assets/complete_binary_tree.png)
+
+
+
+#### 3. 完满二叉树
+
+**`完满二叉树除了叶节点之外，其余所有节点都有两个子节点。`** 
+
+![](https://www.hello-algo.com/chapter_tree/binary_tree.assets/full_binary_tree.png)
+
+#### 4. 平衡二叉树
+
+**`平衡二叉树中任意节点的左子树和右子树的高度之差的绝对值不超过 1。`**
+
+![](https://www.hello-algo.com/chapter_tree/binary_tree.assets/balanced_binary_tree.png)
+
+
+
+### 4. 二叉树的退化
+
+**`如图展示了二叉树的理想结构与退化结构。当二叉树的每层节点都被填满时，达到“完美二叉树”；而当所有节点都偏向一侧时，二叉树退化为“链表”。`** 
+
+- **`完美二叉树是理想情况，可以充分发挥二叉树“分治”的优势。`** 
+- **`链表则是另一个极端，各项操作都变为线性操作，时间复杂度退化至 O(n) 。`** 
+
+![](https://www.hello-algo.com/chapter_tree/binary_tree.assets/binary_tree_best_worst_cases.png)
+
+
+
+## 2. 二叉树遍历
+
+
+
+### 1. 层序遍历
+
+**`层序遍历从顶部到底部逐层遍历二叉树，并在每一层按照从左到右的顺序访问节点。`**
+
+**`层序遍历本质上属于广度优先遍历，也称广度优先搜索，它体现了一种一圈一圈向外扩展的逐层遍历方式。`**
+
+![](https://www.hello-algo.com/chapter_tree/binary_tree_traversal.assets/binary_tree_bfs.png)
+
+#### 1. 代码实现
+
+**`广度优先遍历通常借助队列来实现。队列遵循先进先出的规则，而广度优先遍历则遵循逐层推进的规则，两者背后的思想是一致的。实现代码如下：`** 
 
 ```javascript
-function preorderTraversalIterative(root) {
-  const result = [];
-  const stack = [];
-
-  if (root) {
-    stack.push(root);
-  }
-
-  while (stack.length > 0) {
-    const node = stack.pop();
-    result.push(node.val);
-
-    // 先将右子节点入栈，因为栈是后进先出
-    if (node.right) {
-      stack.push(node.right);
+function levelOrder(root) {
+    const queue = [root];
+    const list = [];
+    while (queue.length) {
+        let node = queue.shift();
+        list.push(node.val);
+        if (node.left) queue.push(node.left);
+        if (node.right) queue.push(node.right);
     }
-    if (node.left) {
-      stack.push(node.left);
-    }
-  }
-
-  return result;
+    
+    return list;
 }
 ```
 
 
 
-### 2. 中序遍历
 
-* **`递归实现：`**
+
+### 2. 前序、中序、后序遍历
+
+**`相应地，前序、中序和后序遍历都属于深度优先遍历，也称深度优先搜索，它体现了一种先走到尽头，再回溯继续的遍历方式。`**
+
+**`如图展示了对二叉树进行深度优先遍历的工作原理。深度优先遍历就像是绕着整棵二叉树的外围走一圈，在每个节点都会遇到三个位置，分别对应前序遍历、中序遍历和后序遍历。`**
+
+![](https://www.hello-algo.com/chapter_tree/binary_tree_traversal.assets/binary_tree_dfs.png)
+
+
+
+#### 1. 代码实现
+
+**`深度优先搜索通常基于递归实现：`**
 
 ```javascript
-function inorderTraversalRecursive(root) {
-  const result = [];
-
-  function traverse(node) {
-    if (node) {
-      traverse(node.left);   // 遍历左子树
-      result.push(node.val); // 访问根节点
-      traverse(node.right);  // 遍历右子树
-    }
-  }
-
-  traverse(root);
-  return result;
+// 前序遍历
+function preOrder(root) {
+    if (root === null) return;
+    
+    // 访问优先级：根节点 -> 左子树 -> 右子树
+    list.push(root.val);
+    preOrder(root.left);
+    preOrder(root.right);
 }
-```
 
 
-
-* **`迭代实现：`**
-
-```javascript
-function inorderTraversalIterative(root) {
-  const result = [];
-  const stack = [];
-  let current = root;
-
-  while (current || stack.length > 0) {
-    // 将所有左子节点入栈
-    while (current) {
-      stack.push(current);
-      current = current.left;
-    }
-
-    // 访问栈顶节点
-    current = stack.pop();
-    result.push(current.val);
-
-    // 遍历右子树
-    current = current.right;
-  }
-
-  return result;
+// 中序遍历
+function inOrder(root) {
+    if (root === null) return;
+    
+    // 访问优先级：左子树 -> 根节点 -> 右子树
+    inOrder(root.left);
+    list.push(root.val);
+    inOrder(root.right);
 }
-```
 
 
-
-### 3. 后序遍历
-
-* **`递归实现：`**
-
-```javascript
-function postorderTraversalRecursive(root) {
-  const result = [];
-
-  function traverse(node) {
-    if (node) {
-      traverse(node.left);   // 遍历左子树
-      traverse(node.right);  // 遍历右子树
-      result.push(node.val); // 访问根节点
-    }
-  }
-
-  traverse(root);
-  return result;
-}
-```
-
-
-
-* **`迭代实现：`**
-
-```javascript
-function postorderTraversalIterative(root) {
-  const result = [];
-  const stack = [];
-  let lastVisited = null;
-  let current = root;
-
-  while (current || stack.length > 0) {
-    // 将所有左子节点入栈
-    while (current) {
-      stack.push(current);
-      current = current.left;
-    }
-
-    // 查看栈顶节点
-    current = stack[stack.length - 1];
-
-    // 如果右子节点存在且未被访问过，则遍历右子树
-    if (current.right && lastVisited !== current.right) {
-      current = current.right;
-    } else {
-      // 访问栈顶节点
-      result.push(current.val);
-      lastVisited = stack.pop();
-      current = null; // 访问完节点后，将 current 设置为 null
-    }
-  }
-
-  return result;
+// 后序遍历
+function postOrder(root) {
+    if (root === null) return;
+    
+    // 访问优先级：左子树 -> 右子树 -> 根节点
+    postOrder(root.left);
+    postOrder(root.right);
+    list.push(root.val);
 }
 ```
 
@@ -2159,330 +2029,17 @@ function postorderTraversalIterative(root) {
 
 
 
-## 4. 自平衡树
+## 3. 二叉树数组表示
 
 
 
-### 1. AVL 树
 
-```javascript
-class AVLTreeNode extends TreeNode {
-  constructor(val) {
-    super(val);
-    this.height = 1; // 新节点的初始高度为 1
-  }
-}
 
-class AVLTree extends BinarySearchTree {
-  constructor() {
-    super();
-  }
 
-  // 获取节点的高度
-  getHeight(node) {
-    if (!node) {
-      return 0;
-    }
-    return node.height;
-  }
 
-  // 右旋
-  rightRotate(y) {
-    const x = y.left;
-    const T2 = x.right;
 
-    // 执行旋转
-    x.right = y;
-    y.left = T2;
 
-    // 更新高度
-    y.height = Math.max(this.getHeight(y.left), this.getHeight(y.right)) + 1;
-    x.height = Math.max(this.getHeight(x.left), this.getHeight(x.right)) + 1;
-
-    return x; // 返回新的根节点
-  }
-
-  // 左旋
-  leftRotate(x) {
-    const y = x.right;
-    const T2 = y.left;
-
-    // 执行旋转
-    y.left = x;
-    x.right = T2;
-
-    // 更新高度
-    x.height = Math.max(this.getHeight(x.left), this.getHeight(x.right)) + 1;
-    y.height = Math.max(this.getHeight(y.left), this.getHeight(y.right)) + 1;
-
-    return y; // 返回新的根节点
-  }
-
-  // 获取平衡因子
-  getBalanceFactor(node) {
-    if (!node) {
-      return 0;
-    }
-    return this.getHeight(node.left) - this.getHeight(node.right);
-  }
-
-  // 插入节点 (AVL 树版本)
-  insert(val) {
-    const newNode = new AVLTreeNode(val);
-    this.root = this.insertNode(this.root, newNode);
-  }
-
-  insertNode(node, newNode) {
-    if (!node) {
-      return newNode;
-    }
-
-    if (newNode.val < node.val) {
-      node.left = this.insertNode(node.left, newNode);
-    } else if (newNode.val > node.val) {
-      node.right = this.insertNode(node.right, newNode);
-    } else {
-      return node; // 不允许重复值
-    }
-
-    // 更新当前节点的高度
-    node.height = Math.max(this.getHeight(node.left), this.getHeight(node.right)) + 1;
-
-    // 获取平衡因子
-    const balanceFactor = this.getBalanceFactor(node);
-
-    // 执行旋转以保持平衡
-    if (balanceFactor > 1 && newNode.val < node.left.val) {
-      // 左-左 情况
-      return this.rightRotate(node);
-    }
-
-    if (balanceFactor < -1 && newNode.val > node.right.val) {
-      // 右-右 情况
-      return this.leftRotate(node);
-    }
-
-    if (balanceFactor > 1 && newNode.val > node.left.val) {
-      // 左-右 情况
-      node.left = this.leftRotate(node.left);
-      return this.rightRotate(node);
-    }
-
-    if (balanceFactor < -1 && newNode.val < node.right.val) {
-      // 右-左 情况
-      node.right = this.rightRotate(node.right);
-      return this.leftRotate(node);
-    }
-
-    return node;
-  }
-
-  // 移除节点 (AVL 树版本)
-  remove(val) {
-    this.root = this.removeNode(this.root, val);
-  }
-
-  removeNode(node, val) {
-    if (!node) {
-      return null;
-    }
-
-    if (val < node.val) {
-      node.left = this.removeNode(node.left, val);
-    } else if (val > node.val) {
-      node.right = this.removeNode(node.right, val);
-    } else {
-      // 找到要删除的节点
-
-      // 情况 1: 叶子节点
-      if (!node.left && !node.right) {
-        return null;
-      }
-
-      // 情况 2: 只有一个子节点
-      if (!node.left) {
-        return node.right;
-      } else if (!node.right) {
-        return node.left;
-      }
-
-      // 情况 3: 有两个子节点
-      const aux = this.minNode(node.right);
-      node.val = aux.val;
-      node.right = this.removeNode(node.right, aux.val);
-    }
-
-    if (!node) {
-      return null;
-    }
-
-    // 更新当前节点的高度
-    node.height = Math.max(this.getHeight(node.left), this.getHeight(node.right)) + 1;
-
-    // 获取平衡因子
-    const balanceFactor = this.getBalanceFactor(node);
-
-    // 执行旋转以保持平衡
-    if (balanceFactor > 1 && this.getBalanceFactor(node.left) >= 0) {
-      // 左-左 情况
-      return this.rightRotate(node);
-    }
-
-    if (balanceFactor < -1 && this.getBalanceFactor(node.right) <= 0) {
-      // 右-右 情况
-      return this.leftRotate(node);
-    }
-
-    if (balanceFactor > 1 && this.getBalanceFactor(node.left) < 0) {
-      // 左-右 情况
-      node.left = this.leftRotate(node.left);
-      return this.rightRotate(node);
-    }
-
-    if (balanceFactor < -1 && this.getBalanceFactor(node.right) > 0) {
-      // 右-左 情况
-      node.right = this.rightRotate(node.right);
-      return this.leftRotate(node);
-    }
-
-    return node;
-  }
-}
-```
-
-
-
-
-
-
-
-### 2. 红黑树
-
-```javascript
-const RED = "RED";
-const BLACK = "BLACK";
-
-class RedBlackTreeNode {
-  constructor(val) {
-    this.val = val;
-    this.left = null;
-    this.right = null;
-    this.color = RED; // 新节点默认为红色
-  }
-}
-
-class RedBlackTree {
-  constructor() {
-    this.root = null;
-  }
-
-  // 左旋
-  leftRotate(node) {
-    const y = node.right;
-    node.right = y.left;
-    if (y.left) {
-      y.left.parent = node;
-    }
-    y.parent = node.parent;
-    if (!node.parent) {
-      this.root = y;
-    } else if (node === node.parent.left) {
-      node.parent.left = y;
-    } else {
-      node.parent.right = y;
-    }
-    y.left = node;
-    node.parent = y;
-  }
-
-  // 右旋
-  rightRotate(node) {
-    const x = node.left;
-    node.left = x.right;
-    if (x.right) {
-      x.right.parent = node;
-    }
-    x.parent = node.parent;
-    if (!node.parent) {
-      this.root = x;
-    } else if (node === node.parent.left) {
-      node.parent.left = x;
-    } else {
-      node.parent.right = x;
-    }
-    x.right = node;
-    node.parent = x;
-  }
-
-  // 颜色翻转
-  flipColors(node) {
-    node.color = RED;
-    node.left.color = BLACK;
-    node.right.color = BLACK;
-  }
-
-  // 插入节点
-  insert(val) {
-    const newNode = new RedBlackTreeNode(val);
-    this.root = this.insertNode(this.root, newNode);
-    this.root.color = BLACK; // 根节点始终为黑色
-  }
-
-  insertNode(node, newNode) {
-    if (!node) {
-      return newNode;
-    }
-
-    if (newNode.val < node.val) {
-      node.left = this.insertNode(node.left, newNode);
-      node.left.parent = node;
-    } else if (newNode.val > node.val) {
-      node.right = this.insertNode(node.right, newNode);
-      node.right.parent = node;
-    } else {
-      return node; // 不允许重复值
-    }
-
-    // 维护红黑树的性质
-    if (this.isRed(node.right) && !this.isRed(node.left)) {
-      node = this.leftRotate(node);
-    }
-    if (this.isRed(node.left) && this.isRed(node.left.left)) {
-      node = this.rightRotate(node);
-    }
-    if (this.isRed(node.left) && this.isRed(node.right)) {
-      this.flipColors(node);
-    }
-
-    return node;
-  }
-
-  // 判断节点是否为红色
-  isRed(node) {
-    if (!node) {
-      return false; // 空节点默认为黑色
-    }
-    return node.color === RED;
-  }
-
-  // 中序遍历
-  inorderTraversal(callback) {
-    this.inorderTraversalNode(this.root, callback);
-  }
-
-  inorderTraversalNode(node, callback) {
-    if (node) {
-      this.inorderTraversalNode(node.left, callback);
-      callback(node.val, node.color);
-      this.inorderTraversalNode(node.right, callback);
-    }
-  }
-}
-```
-
-
-
-
+## 4. 二叉搜索树
 
 
 
