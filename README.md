@@ -2041,9 +2041,63 @@ function postOrder(root) {
 
 ## 4. 二叉搜索树
 
+如图所示，二叉搜索树满足以下条件。
+
+1. 对于根节点，左子树中所有节点的值 < 根节点的值 < 右子树中所有节点的值。
+2. 任意节点的左、右子树也是二叉搜索树，即同样满足条件 1。
+
+![](https://www.hello-algo.com/chapter_tree/binary_search_tree.assets/binary_search_tree.png)
+
+### 1. 二叉搜索树的操作
 
 
 
+#### 1. 查找节点
+
+```javascript
+search(num) {
+    let cur = this.root;
+    while (cur !== null) {
+        if (cur.val < num) cur = cur.right;
+        else if (cur.val > num) cur = cur.left;
+        else break;
+    }
+    
+    return cur;
+}
+```
+
+
+
+
+
+#### 2. 插入节点
+
+```javascript
+insert(num) {
+    if (this.root === null) {
+        this.root = new TreeNode(num);
+        return;
+    }
+    
+    let cur = this.root,
+        pre = null;
+    while (cur !== null) {
+        if (cur.val === num) return;
+        pre = cur;
+        if (cur.val < num) cur = cur.right;
+        else cur = cur.left;
+    }
+    
+    const node = new TreeNode(num);
+    if (pre.val < num) pre.right = node;
+    else pre.left = node;
+}
+```
+
+
+
+#### 
 
 
 
