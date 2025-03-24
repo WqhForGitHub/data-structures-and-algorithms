@@ -2097,7 +2097,43 @@ insert(num) {
 
 
 
-#### 
+#### 3. 删除节点
+
+```javascript
+remove(num) {
+    if (this.root === null) return;
+    let cur = this.root,
+        pre = null;
+    
+    while (cur !== null) {
+        if (cur.val === num) break;
+        pre = cur;
+        if (cur.val < num) cur = cur.right;
+        else cur = cur.left;
+    }
+    
+    if (cur === null) return;
+    if (cur.left === null || cur.right === null) {
+        const child = cur.left != null ? cur.left : cur.right;
+        if (cur !== this.root) {
+            if (pre.left === cur) pre.left = child;
+            else pre.right = child;
+        } else {
+            this.root = child;
+        }
+    } else {
+        let tmp = cur.right;
+        while (tmp.left !== null) {
+            tmp = tmp.left;
+        }
+        
+        this.remove(tmp.val);
+        cur.val = tmp.val;
+    }
+}
+```
+
+
 
 
 
@@ -2803,6 +2839,75 @@ function radixSort(nums) {
     }
 }
 ```
+
+
+
+<br>
+
+<br>
+
+
+
+# 13. 回溯
+
+<br><br>
+
+
+
+## 1. 回溯算法
+
+<br><br>
+
+
+
+
+
+## 2. 全排列问题
+
+**`全排列问题是回溯算法的一个典型应用。`**
+
+
+
+
+
+
+
+
+
+# 贪心
+
+<br><br>
+
+
+
+## 15.1 贪心算法
+
+<br><br>
+
+>Question
+>
+>给定 n 种硬币，第 i 种硬币的面值为 coins[i - 1]，目标金额为 amt，每种硬币可以重复选取，问能够凑出目标金额的最少硬币数量。如果无法凑出目标金额，则返回 -1。
+
+**`本题采取的贪心策略。给定目标金额，我们贪心地选择不大于且最接近它的硬币，不断循环该步骤，直至凑出目标金额为止。`** 
+
+```javascript
+function coinChangeGreedy(coins, amt) {
+    let i = coins.length - 1;
+    let count = 0;
+    while (amt > 0) {
+        while (i > 0 && coins[i] > amt) {
+            i--;
+        }
+        
+        amt -= coins[i];
+        count++;
+    }
+    
+    return amt === 0 ? count : -1;
+}
+```
+
+
 
 
 
