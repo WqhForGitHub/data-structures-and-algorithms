@@ -2864,7 +2864,75 @@ function radixSort(nums) {
 
 ## 2. 全排列问题
 
-**`全排列问题是回溯算法的一个典型应用。`**
+**`全排列问题是回溯算法的一个典型应用。它的定义是在给定一个集合（如一个数组或字符串）的情况下，找出其中元素的所有可能的排列。`**
+
+**`下图列举了几个示例数据，包括输入数组和对应的所有排列。`** 
+
+![](https://front-end-1257950569.cos.ap-guangzhou.myqcloud.com/Hello%20%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%BA%AF/%E5%85%A8%E6%8E%92%E5%88%97%E9%97%AE%E9%A2%98/1.png)
+
+
+
+### 1. 无相等元素的情况
+
+>Question
+>
+>输入一个整数数组，其中不包含重复元素，返回所有可能的排列。
+
+**`从回溯算法的角度看，我们可以把生成排列的过程想象成一系列选择的结果。假设输入数组为 [1, 2, 3]，如果我们先选择 1，再选择 3，最后选择 2，则获得排列 [1, 3, 2]。回退表示撤销一个选择，之后继续尝试其他选择。`** 
+
+**`从回溯代码的角度看，候选集合 choices 是输入数组的所有元素，状态 state 是直至目前已被选择的元素。请注意，每个元素只允许被选择一次，因此 state 中的所有元素都应该是唯一的。`** 
+
+**`如下图，我们可以将搜索过程展开成一颗递归树，树中的每个节点代表当前状态 state。从根节点开始，经过三轮选择后到达叶节点，每个叶节点都对应一个排列。`** 
+
+![](https://front-end-1257950569.cos.ap-guangzhou.myqcloud.com/Hello%20%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%BA%AF/%E5%85%A8%E6%8E%92%E5%88%97%E9%97%AE%E9%A2%98/2.png)
+
+<br>
+
+#### 1. 重复选择剪枝
+
+**`为了实现每个元素只被选择一次，我们考虑引入一个布尔型数组 selected，其中 selected[i] 表示 choices[i] 是否已被选择，并基于它实现以下剪枝操作。`** 
+
+* **`在做出选择 choices[i] 后，我们就将 selected[i] 赋值为 true，代表它已被选择。`** 
+* **`遍历选择列表 choices 时，跳过所有已被选择的节点，即剪枝。`** 
+
+**`如下图，假设我们第一轮选择 1，第二轮选择 3，第三轮选择 2，则需要在第二轮剪掉元素 1 的分支，在第三轮剪掉元素 1 和元素 3 的分支。`** 
+
+![](https://front-end-1257950569.cos.ap-guangzhou.myqcloud.com/Hello%20%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%BA%AF/%E5%85%A8%E6%8E%92%E5%88%97%E9%97%AE%E9%A2%98/3.png)
+
+**`观察图发现，该剪枝操作将搜索空间大小从 o(nⁿ) 减小至 o(n!)。`** 
+
+<br>
+
+#### 2. 代码实现
+
+**`想清楚以上信息之后，我们就可以在框架代码中做完形填空了。为了缩短整体代码，我们不单独实现框架代码中的各个函数，而是将它们展开在 backtrack() 函数中：`**
+
+```javascript
+function backtrack(state, choices, selected, res) {
+    if (state.length === choices.length) {
+        res.push([...state]);
+        return;
+    }
+    
+    choices.forEach((choice, i) => {
+        if (!selected[i]) {
+            selected[i] = true;
+            state.push(choice);
+            backtrack(state, choices, selected, res);
+            selected[i] = false;
+            state.pop();
+        }
+    });
+}
+
+function permutationsI(nums) {
+    const res = [];
+    backtrack([], nums, Array(nums.length).fill(false), res);
+    return res;
+}
+```
+
+
 
 
 
